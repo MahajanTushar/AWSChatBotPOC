@@ -20,7 +20,7 @@ func printCommandEvents(analyticsChannel <-chan *slacker.CommandEvent) {
 }
 
 func main() {
-	token := "xoxb-1427234271280-1409918848549-bpSttkJiwUSFchKQHjjOPdj8"
+	token := "xoxb-1427234271280-1409918848549-Rh1K09v1N45SQv76IJBYKzDi"
 
 	bot := slacker.NewClient(token)
 
