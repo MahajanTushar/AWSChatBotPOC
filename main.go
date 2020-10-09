@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/shomali11/slacker"
+	"github.com/slack-go/slack"
 )
 
 func printCommandEvents(analyticsChannel <-chan *slacker.CommandEvent) {
@@ -20,22 +21,29 @@ func printCommandEvents(analyticsChannel <-chan *slacker.CommandEvent) {
 }
 
 func main() {
-	token := "xoxb-1427234271280-1409918848549-Rh1K09v1N45SQv76IJBYKzDi"
+	token := "xoxb-1427234271280-1409918848549-8wosnYiSpJE11QkEdDfZrrFA"
 
 	bot := slacker.NewClient(token)
 
 	go printCommandEvents(bot.CommandEvents())
 
+	bot.Init(func() {
+		log.Println("Connected!")
+	})
+
+	bot.Err(func(err string) {
+		log.Println(err)
+	})
+
 	bot.Command("Hey I am <name>", &slacker.CommandDefinition{
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
-			name := "Hi" + request.Param("name") + "How may I help you today"
+			name := "Hi " + request.Param("name") + " How may I help you today."
 			response.Reply(name)
 		},
 	})
 
 	bot.Command("tell card numbers associated to my account", &slacker.CommandDefinition{
-		Description: "Echo a word!",
-		Example:     "echo hello",
+		Description: "ask for customer Id when user asks for the card numbers",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
 			word := "sure, please help me with your customer Id"
 			response.Reply(word)
@@ -43,11 +51,27 @@ func main() {
 	})
 
 	bot.Command("acc no : <account-number>", &slacker.CommandDefinition{
-		Description: "Echo a word!",
-		Example:     "echo hello",
+		Description: "send harcoded account numbers back all the time",
 		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+
 			cards := "410086CurrCon90, 510045Curcon23"
+
 			response.Reply(cards)
+		},
+	})
+
+	bot.Command(" more info ? ", &slacker.CommandDefinition{
+		Description: "send the source where more info on this can be found",
+		Handler: func(botCtx slacker.BotContext, request slacker.Request, response slacker.ResponseWriter) {
+			url := "kindly log on to : https://www.tsys.com"
+			attachments := []slack.Attachment{}
+
+			attachments = append(attachments, slack.Attachment{
+				Color: "red",
+				//Actions
+			})
+
+			response.Reply(url, slacker.WithAttachments(attachments))
 		},
 	})
 
