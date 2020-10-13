@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+
+	"errors"
 
 	"github.com/shomali11/slacker"
 	"github.com/slack-go/slack"
@@ -20,14 +23,21 @@ func printCommandEvents(analyticsChannel <-chan *slacker.CommandEvent) {
 	}
 }
 
+func OnlyErrors() error {
+	return errors.New("something went wrong!")
+}
+
 func main() {
-	token := "xoxb-1427234271280-1409918848549-8wosnYiSpJE11QkEdDfZrrFA"
+	//lambda.Start(OnlyErrors)
+
+	token := os.Getenv("botToken")
 
 	bot := slacker.NewClient(token)
 
 	go printCommandEvents(bot.CommandEvents())
 
 	bot.Init(func() {
+		fmt.Println(" token is " + token)
 		log.Println("Connected!")
 	})
 
@@ -67,8 +77,13 @@ func main() {
 			attachments := []slack.Attachment{}
 
 			attachments = append(attachments, slack.Attachment{
-				Color: "red",
-				//Actions
+				Color:    "red",
+				ImageURL: "https://www.tsys.com",
+				Actions: []slack.AttachmentAction{
+					slack.AttachmentAction{
+						URL: "https://www.google.com",
+					},
+				},
 			})
 
 			response.Reply(url, slacker.WithAttachments(attachments))
